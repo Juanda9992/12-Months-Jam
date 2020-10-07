@@ -7,6 +7,7 @@ public class PillandPortal : MonoBehaviour
     #region PublicStuff
     public Light2D portalLight;
     public GameObject pillObject;
+    public ParticleSystem particle;
     public float maxLight;
     #endregion
 
@@ -31,7 +32,13 @@ public class PillandPortal : MonoBehaviour
         actived = true;
 
     } 
-
+    private void OnTriggerEnter2D(Collider2D other) 
+    {
+        pillObject.SetActive(false);    
+        particle.Stop();
+        togglePortal();
+        Destroy(this.gameObject,1);
+    }
     #region Methods
     #endregion
 }

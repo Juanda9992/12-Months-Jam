@@ -6,18 +6,21 @@ public class Player : MonoBehaviour
 
     #region PublicStuff
     public float moveSpeed;
-    public float smooth;
+
     #endregion
 
     #region PrivateStuff
     private float xMove;
     private Rigidbody2D rb;
     private float timeToWin;
+    Transform initialPos;
+    bool hasDeath = false;
     #endregion
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        initialPos = transform;
     }
 
     void FixedUpdate()
@@ -31,8 +34,11 @@ public class Player : MonoBehaviour
         {
             rb.velocity = new Vector2(xMove * moveSpeed, rb.velocity.y);
         }
+        if(transform.position.y < -5)
+        {
+            Death();
+        }
 
-    Debug.Log(timeToWin + "");
     }
 
     private void OnTriggerStay2D(Collider2D other)
@@ -40,9 +46,10 @@ public class Player : MonoBehaviour
         if(other.CompareTag("Finish"))    
         {
             timeToWin += Time.deltaTime;
-            if(timeToWin > 1)
+            if(timeToWin > 0.7f)
             {
-                GameObject.FindObjectOfType<SceneLoader>().LoadScene("Scene2");
+                SceneLoader scene =GameObject.FindObjectOfType<SceneLoader>();
+                scene.LoadScene(scene.levelToLoad);
             }
         }
     }
@@ -50,9 +57,19 @@ public class Player : MonoBehaviour
     {
         if(other.CompareTag("pill"))
         {
-            PillandPortal portal = other.GetComponent<PillandPortal>();
-            portal.togglePortal(); 
+            SoundManager.PlaySound("Boom");
         }    
+    }
+
+    public void Death()
+    {
+        if(!hasDeath)
+        {
+            SoundManager.PlaySound("Cry");
+            hasDeath = !hasDeath;
+        }
+        GameObject.FindObjectOfType<SceneLoader>().Restart();
+        transform.position = initialPos.position;
     }
     #region Methods
     #endregion
