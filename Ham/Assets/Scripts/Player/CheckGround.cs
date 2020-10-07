@@ -16,6 +16,7 @@ public class CheckGround : MonoBehaviour
     bool canJump;
     float currentJumpCount;
     Rigidbody2D rb;
+    bool canPlayFallSound;
     #endregion
 
     private void Start() 
@@ -28,7 +29,16 @@ public class CheckGround : MonoBehaviour
         canJump = Physics2D.OverlapCircle(detectPos.position,circleRadius,ground);
         if(canJump)
         {
+            if(canPlayFallSound)
+            {
+                SoundManager.PlaySound("Fall");
+                canPlayFallSound = false;
+            }
             currentJumpCount = maxJumpCount;
+        }
+        else
+        {
+            canPlayFallSound = true;
         }
         if(Input.GetKeyDown(KeyCode.Space) && currentJumpCount > 0)
         {
